@@ -1,6 +1,6 @@
 ﻿namespace Spear.Core.Models.PubSub
 {
-    internal class DeploymentMessageModel
+    public class DeploymentMessageModel
     {
         public string? InstanceId { get; set; }
         public string? DeploymentId { get; set; }

@@ -111,6 +111,23 @@ namespace Spear.DataAccess
             return null;
         }
 
+        public async Task<SpaceModel> GetSpecificSpace(string spaceId, string url, string apiKey)
+        {
+            var client = new RestClient(url);
+            var request = new RestRequest($"api/{spaceId}");
+            request.AddHeader("X-Octopus-ApiKey", apiKey);
+
+            var response = await client.ExecuteGetAsync(request);
+
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                var octopusRelease = JsonConvert.DeserializeObject<ReleaseOctopusModel>(response.Content);
+                return _modelConverter.ConvertFromOctopusToReleaseModel(octopusRelease, project.Id);
+            }
+
+            return null;
+        }
+
         public async Task<DeploymentModel> GetSpecificDeployment(InstanceModel instanceModel, SpaceModel space, ReleaseModel release, string deploymentId, Dictionary<string, EnvironmentModel> environmentDictionary, Dictionary<string, TenantModel> tenantDictionary)
         {
             var client = new RestClient(instanceModel.Url);

@@ -25,7 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Spear\Spear\Spear.csproj" />
+    <ProjectReference Include="..\Spear\Spear.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -121,8 +121,8 @@ namespace Spear.DataAccess
 
             if (response.StatusCode == HttpStatusCode.OK)
             {
-                var octopusRelease = JsonConvert.DeserializeObject<ReleaseOctopusModel>(response.Content);
-                return _modelConverter.ConvertFromOctopusToReleaseModel(octopusRelease, project.Id);
+                var octopusSpace = JsonConvert.DeserializeObject<NameOnlyOctopusModel>(response.Content);
+                return _modelConverter.ConvertFromOctopusToSpaceModel(octopusSpace);
             }
 
             return null;

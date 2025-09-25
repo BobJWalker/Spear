@@ -8,6 +8,7 @@ WORKDIR /app
 
 # This stage is used to build the service project
 FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+ARG TARGETARCH
 WORKDIR /src
 COPY ["Spear.csproj", "."]
 RUN dotnet restore "./Spear.csproj"

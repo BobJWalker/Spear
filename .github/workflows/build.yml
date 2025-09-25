@@ -163,10 +163,8 @@ jobs:
           provenance: false          
           args: |
             APP_VERSION=${{ needs.prep.outputs.sem_Ver }}
-          tags: |
-            ${{ vars.DOCKER_HUB_REPO }}:${{ needs.prep.outputs.sem_Ver }}
-            ${{ vars.DOCKER_HUB_REPO }}:latest
-          outputs: type=image,push-by-digest=true,name-canonical=true,push=true                                                   
+          tags: ${{ vars.DOCKER_HUB_REPO }}:${{ needs.prep.outputs.sem_Ver }},${{ vars.DOCKER_HUB_REPO }}:latest
+          outputs: type=image,name-canonical=true,push=true                                                   
 
       - name: Run Trivy vulnerability scanner on docker container
         uses: aquasecurity/trivy-action@0.33.1

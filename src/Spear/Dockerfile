@@ -9,17 +9,16 @@ WORKDIR /app
 # This stage is used to build the service project
 FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG TARGETARCH
-ARG APP_VERSION="6.13.0"
 WORKDIR /src
 COPY ["Spear/Spear.csproj", "Spear/"]
 RUN dotnet restore "Spear/Spear.csproj"
 COPY . .
 WORKDIR "/src/Spear"
-RUN dotnet build "Spear.csproj" -c Release -o /app/build /p:$APP_VERSION -a $TARGETARCH
+RUN dotnet build "Spear.csproj" -c Release -o /app/build -a $TARGETARCH
 
 # This stage is used to publish the service project to be copied to the final stage
 FROM build AS publish
-RUN dotnet publish "Spear.csproj" -c Release -o /app/publish /p:UseAppHost=false /p:Version=$APP_VERSION -a $TARGETARCH
+RUN dotnet publish "Spear.csproj" -c Release -o /app/publish /p:UseAppHost=false -a $TARGETARCH
 
 # This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
 FROM base AS final

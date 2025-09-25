@@ -126,11 +126,19 @@ jobs:
     name: Build, Scan, and Publish Website
     outputs:       
       website_hash: ${{ steps.push_docker_image.outputs.SPEAR_DOCKER_SHA }}
-    needs: [prep, test, scan, gh_release]
+    needs: [prep, test, scan, gh_release]                 
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code to build website
         uses: actions/checkout@v1
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: linux/amd64,linux/arm64
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v3
@@ -140,11 +148,17 @@ jobs:
       - name: Install dependencies
         run: dotnet restore src/Spear.sln  
     
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:             
+            username: ${{ secrets.DOCKERHUB_USERNAME }}
+            password: ${{ secrets.DOCKERHUB_PAT }}
+
       - name: build website container
         id: build_container
         working-directory: src
         run: | 
-            docker build -f "./Spear/Dockerfile"  --build-arg APP_VERSION=${{ needs.prep.outputs.sem_Ver }} --tag ${{ vars.DOCKER_HUB_REPO }}:${{ needs.prep.outputs.sem_Ver }} --tag ${{ vars.DOCKER_HUB_REPO }}:latest .                                               
+            docker buildx build -f "./Spear/Dockerfile" --platform=linux/amd64,linux/arm64,linux/arm/v7 --build-arg APP_VERSION=${{ needs.prep.outputs.sem_Ver }} --tag ${{ vars.DOCKER_HUB_REPO }}:${{ needs.prep.outputs.sem_Ver }} --tag ${{ vars.DOCKER_HUB_REPO }}:latest --push .                                               
 
       - name: Run Trivy vulnerability scanner on docker container
         uses: aquasecurity/trivy-action@0.33.1
@@ -161,19 +175,11 @@ jobs:
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: 'trivy-image-results.sarif'
-
-      - name: Login to Docker Hub
-        uses: docker/login-action@v2
-        with:             
-            username: ${{ secrets.DOCKERHUB_USERNAME }}
-            password: ${{ secrets.DOCKERHUB_PAT }}
-      - name: push docker image
+      
+      - name: get docker image sha
         working-directory: src
         id: push_docker_image
         run: |
-            docker push ${{ vars.DOCKER_HUB_REPO }}:${{ needs.prep.outputs.sem_Ver }}
-            docker push ${{ vars.DOCKER_HUB_REPO }}:latest
-
             dockerSha=$(docker manifest inspect ${{ vars.DOCKER_HUB_REPO }}:${{ needs.prep.outputs.sem_Ver }} -v | jq -r '.Descriptor.digest')
             echo "Docker sha is $dockerSha"            
             echo "SPEAR_DOCKER_SHA=$dockerSha" >> $GITHUB_OUTPUT

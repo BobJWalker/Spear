@@ -7,6 +7,17 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spear.Tests", "Spear.Tests\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spear", "Spear\Spear.csproj", "{FB2262CF-21BD-1E82-9739-94D62958A6AE}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Workflows", "Workflows", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+	ProjectSection(SolutionItems) = preProject
+		..\.github\workflows\build.yml = ..\.github\workflows\build.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "K8s", "K8s", "{5BFE8B70-4BD9-4DEF-AEAB-70C762D218DF}"
+	ProjectSection(SolutionItems) = preProject
+		..\k8s\base\spear-app-secrets.yaml = ..\k8s\base\spear-app-secrets.yaml
+		..\k8s\base\spear-deployment.yaml = ..\k8s\base\spear-deployment.yaml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

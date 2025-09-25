@@ -125,7 +125,7 @@ jobs:
   build_and_publish_website:
     name: Build, Scan, and Publish Website
     outputs:       
-      website_hash: ${{ steps.push_docker_image.outputs.SPEAR_DOCKER_SHA }}
+      website_hash: ${{ steps.get_digest.outputs.SPEAR_DOCKER_SHA }}
     needs: [prep, test, scan, gh_release]                 
     runs-on: ubuntu-latest
     steps:
@@ -154,11 +154,22 @@ jobs:
             username: ${{ secrets.DOCKERHUB_USERNAME }}
             password: ${{ secrets.DOCKERHUB_PAT }}
 
-      - name: build website container
+      - name: Build and push by digest
         id: build_container
-        working-directory: src
-        run: | 
-            docker buildx build -f "./Spear/Dockerfile" --platform=linux/amd64,linux/arm64,linux/arm/v7 --build-arg APP_VERSION=${{ needs.prep.outputs.sem_Ver }} --tag ${{ vars.DOCKER_HUB_REPO }}:${{ needs.prep.outputs.sem_Ver }} --tag ${{ vars.DOCKER_HUB_REPO }}:latest --push .                                               
+        uses: docker/build-push-action@v6        
+        with:   
+          context: src/Spear
+          platforms: |
+           - linux/amd64
+           - linux/arm64
+           - linux/arm/v7
+          provenance: false          
+          args: |
+            APP_VERSION=${{ needs.prep.outputs.sem_Ver }}
+          tags: |
+           - ${{ vars.DOCKER_HUB_REPO }}:${{ needs.prep.outputs.sem_Ver }}
+           - ${{ vars.DOCKER_HUB_REPO }}:latest
+          outputs: type=image,push-by-digest=true,name-canonical=true,push=true                                                   
 
       - name: Run Trivy vulnerability scanner on docker container
         uses: aquasecurity/trivy-action@0.33.1
@@ -178,9 +189,10 @@ jobs:
       
       - name: get docker image sha
         working-directory: src
-        id: push_docker_image
+        id: get_digest
         run: |
-            dockerSha=$(docker manifest inspect ${{ vars.DOCKER_HUB_REPO }}:${{ needs.prep.outputs.sem_Ver }} -v | jq -r '.Descriptor.digest')
+            digest = "${{ steps.build_container.outputs.digest }}"
+            dockerSha="${digest#sha256:}"
             echo "Docker sha is $dockerSha"            
             echo "SPEAR_DOCKER_SHA=$dockerSha" >> $GITHUB_OUTPUT
 

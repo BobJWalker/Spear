@@ -10,8 +10,8 @@ WORKDIR /app
 FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG TARGETARCH
 WORKDIR /src
-COPY ["Spear/Spear.csproj", "Spear/"]
-RUN dotnet restore "Spear/Spear.csproj"
+COPY ["./Spear.csproj", "Spear/"]
+RUN dotnet restore "./Spear.csproj"
 COPY . .
 WORKDIR "/src/Spear"
 RUN dotnet build "Spear.csproj" -c Release -o /app/build -a $TARGETARCH

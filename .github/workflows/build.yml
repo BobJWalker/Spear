@@ -185,10 +185,8 @@ jobs:
       - name: get docker image sha
         working-directory: src
         id: get_digest
-        run: |     
-            docker pull ${{ vars.DOCKER_HUB_REPO }}:${{ needs.prep.outputs.sem_Ver }}   
-            
-            dockerSha=$(docker manifest inspect ${{ vars.DOCKER_HUB_REPO }}:${{ needs.prep.outputs.sem_Ver }} -v | jq -r '.Descriptor.digest')
+        run: |            
+            dockerSha="${{ steps.build_container.outputs.digest }}"
             echo "Docker sha is $dockerSha"            
             echo "SPEAR_DOCKER_SHA=$dockerSha" >> $GITHUB_OUTPUT
 

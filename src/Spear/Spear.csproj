@@ -3,10 +3,9 @@
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>dotnet-Spear-c46eeb8a-7260-41cf-b630-3d777024fb88</UserSecretsId>
-    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-    <DockerfileContext>.</DockerfileContext>
+    <ImplicitUsings>enable</ImplicitUsings>        
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    <StartupObject>Spear.Program</StartupObject>
   </PropertyGroup>
 
   <ItemGroup>

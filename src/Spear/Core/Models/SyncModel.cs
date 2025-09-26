@@ -5,8 +5,8 @@ namespace Spear.Core.Models
     public class SyncModel : BaseModel
     {
         public int InstanceId { get; set; }
-        public string State { get; set; }
-        public string Name { get; set; }
+        public required string State { get; set; }
+        public required string Name { get; set; }
         public DateTime Created { get; set; }
         public DateTime? Started { get; set; }
         public DateTime? Completed { get; set; }

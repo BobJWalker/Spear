@@ -2,15 +2,15 @@
 {
     public class DeploymentOctopusModel : BaseOctopusServerModel
     {
-        public string EnvironmentId { get; set; }
-        public string TenantId { get; set; }
-        public string Name { get; set; }
+        public required string EnvironmentId { get; set; }
+        public required string TenantId { get; set; }
+        public required string Name { get; set; }
 
-        public DeploymentOctopusModelLinks Links { get; set; } = new DeploymentOctopusModelLinks();
+        public required DeploymentOctopusModelLinks Links { get; set; }
 
         public class DeploymentOctopusModelLinks
         {
-            public string Task { get; set; }
+            public required string Task { get; set; }
         }
     }
 }

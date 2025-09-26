@@ -10,15 +10,32 @@ namespace Spear
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
-        {
-            while (!stoppingToken.IsCancellationRequested)
+        {            
+            try
             {
-                if (_logger.IsEnabled(LogLevel.Information))
+                using (var timer = new PeriodicTimer(TimeSpan.FromSeconds(15)))
                 {
-                    _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
+                    while (!stoppingToken.IsCancellationRequested)
+                    {
+                        while(await timer.WaitForNextTickAsync())
+                        {
+                            await RunJobAsync(stoppingToken);
+                        }                        
+                    }
                 }
-                await Task.Delay(1000, stoppingToken);
             }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unhandled exception in the core Worker Class");
+                throw;
+            }            
+        }
+
+        private async Task RunJobAsync(CancellationToken stoppingToken)
+        {
+            _logger.LogInformation("Processing tasks at: {time}", DateTimeOffset.Now);
+
+            await Task.Delay(1000);
         }
     }
 }

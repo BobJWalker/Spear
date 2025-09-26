@@ -21,8 +21,8 @@ namespace Spear.DataAccess
         Task<List<ReleaseModel>> GetAllReleasesForProjectAsync(InstanceModel instanceModel, SpaceModel space, ProjectModel project);
         Task<List<DeploymentModel>> GetAllDeploymentsForReleaseAsync(InstanceModel instanceModel, SpaceModel space, ProjectModel project, ReleaseModel releaseModel, Dictionary<string, EnvironmentModel> environmentDictionary, Dictionary<string, TenantModel> tenantDictionary);
         Task<PagedOctopusModel<EventOctopusModel>> GetAllEvents(InstanceModel instanceModel, SyncModel syncModel, int startIndex);
-        Task<ReleaseModel> GetSpecificRelease(InstanceModel instanceModel, SpaceModel space, ProjectModel project, string releaseId);
-        Task<DeploymentModel> GetSpecificDeployment(InstanceModel instanceModel, SpaceModel space, ReleaseModel release, string deploymentId, Dictionary<string, EnvironmentModel> environmentDictionary, Dictionary<string, TenantModel> tenantDictionary);
+        Task<ReleaseModel?> GetSpecificRelease(InstanceModel instanceModel, SpaceModel space, ProjectModel project, string releaseId);
+        Task<DeploymentModel?> GetSpecificDeployment(InstanceModel instanceModel, SpaceModel space, ReleaseModel release, string deploymentId, Dictionary<string, EnvironmentModel> environmentDictionary, Dictionary<string, TenantModel> tenantDictionary);
     }
 
     public class OctopusRepository : IOctopusRepository
@@ -75,7 +75,20 @@ namespace Spear.DataAccess
                 request.AddHeader("X-Octopus-ApiKey", instanceModel.ApiKey);
 
                 var response = await client.ExecuteGetAsync(request);
+
+                if (string.IsNullOrWhiteSpace(response.Content) == true)
+                {
+                    continueQuery = false;
+                    continue;
+                }
+
                 var pagedModel = JsonConvert.DeserializeObject<PagedOctopusModel<DeploymentOctopusModel>>(response.Content);
+
+                if (pagedModel == null)
+                {
+                    continueQuery = false;
+                    continue;
+                }
 
                 foreach (var item in pagedModel.Items)
                 {
@@ -83,7 +96,23 @@ namespace Spear.DataAccess
                     deploymentRequest.AddHeader("X-Octopus-ApiKey", instanceModel.ApiKey);
 
                     var deploymentResponse = await client.ExecuteGetAsync(deploymentRequest);
+
+                    if (deploymentResponse == null)
+                    {
+                        break;
+                    }
+
+                    if (string.IsNullOrWhiteSpace(deploymentResponse.Content) == true)
+                    {
+                        break;
+                    }
+
                     var deploymentTaskModel = JsonConvert.DeserializeObject<DeploymentOctopusTaskModel>(deploymentResponse.Content);
+
+                    if (deploymentTaskModel == null)
+                    {
+                        break;
+                    }
 
                     returnList.Add(_modelConverter.ConvertFromOctopusToDeploymentModel(item, deploymentTaskModel, release.Id, environmentDictionary, tenantDictionary));
                 }
@@ -94,7 +123,7 @@ namespace Spear.DataAccess
             return returnList;
         }
 
-        public async Task<ReleaseModel> GetSpecificRelease(InstanceModel instanceModel, SpaceModel space, ProjectModel project, string releaseId)
+        public async Task<ReleaseModel?> GetSpecificRelease(InstanceModel instanceModel, SpaceModel space, ProjectModel project, string releaseId)
         {
             var client = new RestClient(instanceModel.Url);
             var request = new RestRequest($"api/{space.OctopusId}/release/{releaseId}");
@@ -102,16 +131,22 @@ namespace Spear.DataAccess
 
             var response = await client.ExecuteGetAsync(request);
 
-            if (response.StatusCode == HttpStatusCode.OK)
+            if (response.StatusCode == HttpStatusCode.OK && string.IsNullOrWhiteSpace(response.Content) == false)
             {
                 var octopusRelease = JsonConvert.DeserializeObject<ReleaseOctopusModel>(response.Content);
+
+                if (octopusRelease == null)
+                {
+                    return null;
+                }
+
                 return _modelConverter.ConvertFromOctopusToReleaseModel(octopusRelease, project.Id);
             }
 
             return null;
         }
 
-        public async Task<SpaceModel> GetSpecificSpace(string spaceId, string url, string apiKey)
+        public async Task<SpaceModel?> GetSpecificSpace(string spaceId, string url, string apiKey)
         {
             var client = new RestClient(url);
             var request = new RestRequest($"api/{spaceId}");
@@ -119,16 +154,22 @@ namespace Spear.DataAccess
 
             var response = await client.ExecuteGetAsync(request);
 
-            if (response.StatusCode == HttpStatusCode.OK)
+            if (response.StatusCode == HttpStatusCode.OK && string.IsNullOrWhiteSpace(response.Content) == false)
             {
                 var octopusSpace = JsonConvert.DeserializeObject<NameOnlyOctopusModel>(response.Content);
+
+                if (octopusSpace == null)
+                {
+                    return null;
+                }
+
                 return _modelConverter.ConvertFromOctopusToSpaceModel(octopusSpace);
             }
 
             return null;
         }
 
-        public async Task<DeploymentModel> GetSpecificDeployment(InstanceModel instanceModel, SpaceModel space, ReleaseModel release, string deploymentId, Dictionary<string, EnvironmentModel> environmentDictionary, Dictionary<string, TenantModel> tenantDictionary)
+        public async Task<DeploymentModel?> GetSpecificDeployment(InstanceModel instanceModel, SpaceModel space, ReleaseModel release, string deploymentId, Dictionary<string, EnvironmentModel> environmentDictionary, Dictionary<string, TenantModel> tenantDictionary)
         {
             var client = new RestClient(instanceModel.Url);
             var request = new RestRequest($"api/{space.OctopusId}/deployments/{deploymentId}");
@@ -136,15 +177,29 @@ namespace Spear.DataAccess
 
             var response = await client.ExecuteGetAsync(request);
 
-            if (response.StatusCode == HttpStatusCode.OK)
+            if (response.StatusCode == HttpStatusCode.OK && string.IsNullOrWhiteSpace(response.Content) == false)
             {
                 var octopusModel = JsonConvert.DeserializeObject<DeploymentOctopusModel>(response.Content);
+
+                if (octopusModel == null)
+                {
+                    return null;
+                }
 
                 var deploymentRequest = new RestRequest(octopusModel.Links.Task);
                 deploymentRequest.AddHeader("X-Octopus-ApiKey", instanceModel.ApiKey);
 
                 var deploymentResponse = await client.ExecuteGetAsync(deploymentRequest);
+                if (deploymentResponse.StatusCode != HttpStatusCode.OK || string.IsNullOrWhiteSpace(deploymentResponse.Content) == true)
+                {
+                    return null;
+                }
                 var deploymentTaskModel = JsonConvert.DeserializeObject<DeploymentOctopusTaskModel>(deploymentResponse.Content);
+
+                if (deploymentTaskModel == null)
+                {
+                    return null;
+                }
 
                 return _modelConverter.ConvertFromOctopusToDeploymentModel(octopusModel, deploymentTaskModel, release.Id, environmentDictionary, tenantDictionary);
             }
@@ -186,7 +241,20 @@ namespace Spear.DataAccess
                 request.AddHeader("X-Octopus-ApiKey", instanceModel.ApiKey);
 
                 var response = await client.ExecuteGetAsync(request);
+
+                if (response.StatusCode != HttpStatusCode.OK || string.IsNullOrWhiteSpace(response.Content) == true)
+                {
+                    continueQuery = false;
+                    continue;
+                }
+
                 var pagedModel = JsonConvert.DeserializeObject<PagedOctopusModel<OctoT>>(response.Content);
+
+                if (pagedModel == null)
+                {
+                    continueQuery = false;
+                    continue;
+                }
 
                 returnList.AddRange(pagedModel.Items.Select(converterFunction));
 

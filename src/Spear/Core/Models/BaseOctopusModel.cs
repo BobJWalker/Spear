@@ -2,6 +2,6 @@
 {
     public class BaseOctopusModel : BaseModel
     {
-        public string OctopusId { get; set; }
+        public required string OctopusId { get; set; }
     }
 }

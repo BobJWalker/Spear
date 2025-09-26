@@ -7,6 +7,6 @@ namespace Spear.Core.Models.OctopusServerModels
         public DateTime QueueTime { get; set; }
         public DateTime? StartTime { get; set; }
         public DateTime? CompletedTime { get; set; }
-        public string State { get; set; }
+        public required string State { get; set; }
     }
 }

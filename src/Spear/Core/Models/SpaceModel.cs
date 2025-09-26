@@ -6,6 +6,6 @@ namespace Spear.Core.Models
     public class SpaceModel : BaseOctopusModel
     {
         public int InstanceId { get; set; }
-        public string Name { get; set; }
+        public required string Name { get; set; }
     }
 }

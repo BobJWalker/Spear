@@ -4,7 +4,7 @@
 FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
 USER app
 WORKDIR /app
-
+EXPOSE 8080
 
 # This stage is used to build the service project
 FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:9.0 AS build
@@ -28,5 +28,7 @@ ENV SPEAR_INSTANCE_API_KEY=blah
 ENV SPEAR_SUMOLOGIC_URL=blah
 ENV SPEAR_ENVIRONMENT="Production"
 ENV SPEAR_OPEN_FEATURE_CLIENT_ID="blah"
+ENV ASPNETCORE_URLS="http://+:8080"
+ENV ASPNETCORE_ENVIRONMENT="Production"
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "Spear.dll"]

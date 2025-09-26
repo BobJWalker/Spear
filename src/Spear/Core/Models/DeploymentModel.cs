@@ -12,6 +12,6 @@ namespace Spear.Core.Models
         public DateTime QueueTime { get; set; }
         public DateTime? StartTime { get; set; }
         public DateTime? CompletedTime { get; set; }
-        public string DeploymentState { get; set; }
+        public required string DeploymentState { get; set; }
     }
 }

@@ -7,7 +7,7 @@ namespace Spear.Core.Models
     public class ReleaseModel : BaseOctopusModel
     {
         public int ProjectId { get; set; }
-        public string Version { get; set; }
+        public required string Version { get; set; }
         public DateTime Created { get; set; }
     }
 }

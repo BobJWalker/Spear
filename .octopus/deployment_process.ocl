@@ -54,6 +54,7 @@ step "run-octopus-deploy-runbook" {
             Run.Runbook.Api.Key = "#{KeyVault.Octopus.Api.Key}"
             Run.Runbook.AutoApproveManualInterventions = "No"
             Run.Runbook.Base.Url = "#{Octopus.Web.ServerUri}"
+            Run.Runbook.CaCBranchName = "main"
             Run.Runbook.CancelInSeconds = "1800"
             Run.Runbook.CustomNotes.Toggle = "False"
             Run.Runbook.DateTime = "N/A"

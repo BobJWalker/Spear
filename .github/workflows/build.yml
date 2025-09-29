@@ -161,7 +161,7 @@ jobs:
             linux/arm64
             linux/arm/v7
           provenance: false          
-          args: |
+          build-args: |
             APP_VERSION=${{ needs.prep.outputs.sem_Ver }}
           tags: ${{ vars.DOCKER_HUB_REPO }}:${{ needs.prep.outputs.sem_Ver }},${{ vars.DOCKER_HUB_REPO }}:latest
           outputs: type=image,name-canonical=true,push=true                                                   

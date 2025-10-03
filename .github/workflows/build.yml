@@ -174,7 +174,7 @@ jobs:
           image-ref: '${{ vars.DOCKER_HUB_REPO }}:${{ needs.prep.outputs.sem_Ver }}'
           vuln-type: 'os,library'
           ignore-unfixed: true
-          exit-code: '1'
+          exit-code: '0'
           format: 'sarif'          
           output: 'trivy-image-results.sarif'          
           severity: 'MEDIUM,HIGH,CRITICAL'

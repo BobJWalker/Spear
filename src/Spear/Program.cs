@@ -1,11 +1,5 @@
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using NLog.Config;
 using NLog.Web;
 using Octopus.OpenFeature.Provider;
@@ -13,9 +7,7 @@ using OpenFeature;
 using OpenFeature.Model;
 using OpenFeature.Contrib.Providers.EnvVar;
 using SumoLogic.Logging.NLog;
-using System;
 using System.Reflection;
-using System.Threading.Tasks;
 
 namespace Spear
 {

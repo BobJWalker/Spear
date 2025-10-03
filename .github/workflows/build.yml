@@ -168,13 +168,14 @@ jobs:
 
       - name: Run Trivy vulnerability scanner on docker container
         uses: aquasecurity/trivy-action@0.33.1
+        env:
+          TRIVY_SKIP_VERSION_CHECK: true
         with:
           image-ref: '${{ vars.DOCKER_HUB_REPO }}:${{ needs.prep.outputs.sem_Ver }}'
           vuln-type: 'os,library'
           ignore-unfixed: true
           exit-code: '1'
-          format: 'sarif'
-          version: '0.67.0'
+          format: 'sarif'          
           output: 'trivy-image-results.sarif'          
           severity: 'MEDIUM,HIGH,CRITICAL'
 

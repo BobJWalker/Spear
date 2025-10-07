@@ -13,3 +13,7 @@ variable "stringData:openFeatureClientId" {
 variable "stringData:sumologicUrl" {
     value "#{KeyVault.Sumologic.Url}" {}
 }
+
+variable "spec:rules:0:host" {
+    value "#{Standards.K8s.HostName}" {}
+}

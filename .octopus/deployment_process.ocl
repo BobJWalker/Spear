@@ -43,34 +43,6 @@ process_template "verify-build-artifacts" {
     }
 }
 
-step "run-octopus-deploy-runbook" {
-    name = "Verify Infrastructure"
-
-    action {
-        channels = ["default"]
-        properties = {
-            Octopus.Action.Template.Id = "ActionTemplates-141"
-            Octopus.Action.Template.Version = "18"
-            Run.Runbook.Api.Key = "#{KeyVault.Octopus.Api.Key}"
-            Run.Runbook.AutoApproveManualInterventions = "No"
-            Run.Runbook.Base.Url = "#{Octopus.Web.ServerUri}"
-            Run.Runbook.CaCBranchName = "main"
-            Run.Runbook.CancelInSeconds = "1800"
-            Run.Runbook.CustomNotes.Toggle = "False"
-            Run.Runbook.DateTime = "N/A"
-            Run.Runbook.Environment.Name = "#{Octopus.Environment.Name}"
-            Run.Runbook.Machines = "N/A"
-            Run.Runbook.ManualIntervention.EnvironmentToUse = "#{Octopus.Environment.Name}"
-            Run.Runbook.Name = "Create Infrastructure"
-            Run.Runbook.Project.Name = "#{Octopus.Project.Name}"
-            Run.Runbook.Space.Name = "#{Octopus.Space.Name}"
-            Run.Runbook.UsePublishedSnapShot = "True"
-            Run.Runbook.Waitforfinish = "True"
-        }
-        worker_pool_variable = "Standards.Worker.Pool"
-    }
-}
-
 process_template "deploy-k8s-manifest" {
     name = "Deploy K8s Manifest"
     process_template_slug = "deploy-process-deploy-to-kubernetes-via-manifest"

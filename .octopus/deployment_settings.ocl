@@ -1,4 +1,4 @@
-default_guided_failure_mode = "On"
+default_guided_failure_mode = "Off"
 
 connectivity_policy {
     allow_deployments_to_no_targets = true

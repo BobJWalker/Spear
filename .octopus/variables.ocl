@@ -17,3 +17,16 @@ variable "stringData:sumologicUrl" {
 variable "spec:rules:0:host" {
     value "#{Standards.K8s.HostName}" {}
 }
+
+variable "Project.Scanning.IncludeMediumSeverity" {
+    value "False" {
+        prompt {
+            description = "Includes `Medium` severity issues in addition to `Critical` and `High` when looking for open vulnerabilities"
+            display_settings = {
+                Octopus.ControlType = "Checkbox"
+            }
+            label = "Include Medium Severity"
+            required = true
+        }
+    }
+}

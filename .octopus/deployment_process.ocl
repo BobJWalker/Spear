@@ -41,6 +41,10 @@ process_template "verify-build-artifacts" {
     parameter "Template.Verify.ExecutionContainerFeed" {
         value = "Feeds-1283"
     }
+
+    parameter "Template.Verify.IncludeMedium" {
+        value = "#{Project.Scanning.IncludeMediumSeverity}"
+    }
 }
 
 process_template "deploy-k8s-manifest" {

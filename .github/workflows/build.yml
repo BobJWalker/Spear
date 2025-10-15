@@ -99,19 +99,21 @@ jobs:
 
   verify_infrastructure:       
     runs-on: ubuntu-latest 
-    name: Verify Infrastructure via a runbook in Octopus Deploy 
+    name: Pre deploy preparations    
     permissions:
       # Add any additional permissions your job requires here
       id-token: write # This is required to obtain the ID token from GitHub Actions     
     steps:
       - name: Login to Octopus Deploy 
         uses: OctopusDeploy/login@v1
+        if: github.ref == 'refs/heads/main'
         with: 
           server: ${{ vars.OCTOPUS_SERVER_URL }}
           service_account_id: ${{ secrets.OCTOPUS_OIDC_SERVICE_ACCOUNT_ID }}
 
       - name: Run verify infrastructure runbook on Octopus Deploy
         uses: OctopusDeploy/run-runbook-action@v3
+        if: github.ref == 'refs/heads/main'
         env:          
           OCTOPUS_URL: "${{ vars.OCTOPUS_SERVER_URL }}"
           OCTOPUS_SPACE: "${{ vars.OCTOPUS_SPACE }}"
@@ -131,6 +133,7 @@ jobs:
     steps:   
       - name: Checkout Code to build website
         uses: actions/checkout@v1   
+        if: github.ref == 'refs/heads/main'
 
       - name: Create Release for GitHub
         id: create_release

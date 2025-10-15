@@ -16,10 +16,32 @@ on:
 jobs:
   prep:
     runs-on: ubuntu-latest
-    name: Determine version
+    name: Deploy Preparation
     outputs:       
       sem_ver: ${{ steps.determine_version.outputs.AssemblySemFileVer }}
-    steps:      
+    permissions:
+      # Add any additional permissions your job requires here
+      id-token: write # This is required to obtain the ID token from GitHub Actions     
+    steps:
+      - name: Login to Octopus Deploy 
+        uses: OctopusDeploy/login@v1
+        if: github.ref == 'refs/heads/main'
+        with: 
+          server: ${{ vars.OCTOPUS_SERVER_URL }}
+          service_account_id: ${{ secrets.OCTOPUS_OIDC_SERVICE_ACCOUNT_ID }}
+
+      - name: Run Create Infrastructure Runbook on Octopus Deploy
+        uses: OctopusDeploy/run-runbook-action@v3
+        if: github.ref == 'refs/heads/main'
+        env:          
+          OCTOPUS_URL: "${{ vars.OCTOPUS_SERVER_URL }}"
+          OCTOPUS_SPACE: "${{ vars.OCTOPUS_SPACE }}"
+        with:
+          project: "${{ vars.OCTOPUS_PROJECT_NAME }}"          
+          runbook: "Create Infrastructure"
+          environments: "Test"  
+          git_ref: ${{ (github.head_ref || github.ref ) }}   
+
       - name: Set environment variable based on branch
         id: set_env_var
         run: |
@@ -95,37 +117,11 @@ jobs:
       - name: Upload Trivy scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v3
         with:
-          sarif_file: 'trivy-results.sarif'
-
-  verify_infrastructure:       
-    runs-on: ubuntu-latest 
-    name: Pre deploy preparations    
-    permissions:
-      # Add any additional permissions your job requires here
-      id-token: write # This is required to obtain the ID token from GitHub Actions     
-    steps:
-      - name: Login to Octopus Deploy 
-        uses: OctopusDeploy/login@v1
-        if: github.ref == 'refs/heads/main'
-        with: 
-          server: ${{ vars.OCTOPUS_SERVER_URL }}
-          service_account_id: ${{ secrets.OCTOPUS_OIDC_SERVICE_ACCOUNT_ID }}
-
-      - name: Run verify infrastructure runbook on Octopus Deploy
-        uses: OctopusDeploy/run-runbook-action@v3
-        if: github.ref == 'refs/heads/main'
-        env:          
-          OCTOPUS_URL: "${{ vars.OCTOPUS_SERVER_URL }}"
-          OCTOPUS_SPACE: "${{ vars.OCTOPUS_SPACE }}"
-        with:
-          project: "${{ vars.OCTOPUS_PROJECT_NAME }}"          
-          runbook: "Create Infrastructure"
-          environments: "Test"  
-          git_ref: ${{ (github.head_ref || github.ref ) }}   
+          sarif_file: 'trivy-results.sarif'       
 
   gh_release:  
     name: Create GitHub Release
-    needs: [prep, test, scan, verify_infrastructure]  
+    needs: [prep, test, scan]  
     runs-on: ubuntu-latest
     permissions:
       id-token: write      
@@ -153,7 +149,7 @@ jobs:
     name: Build, Scan, and Publish Website
     outputs:       
       website_hash: ${{ steps.get_digest.outputs.SPEAR_DOCKER_SHA }}
-    needs: [prep, test, scan, gh_release, verify_infrastructure]                 
+    needs: [prep, test, scan, gh_release]                 
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code to build website
@@ -222,7 +218,7 @@ jobs:
     name: Generate and Publish SBOM           
     outputs:       
       sbom_hash: ${{ steps.determine_sbom_hash.outputs.SBOM_HASH }}
-    needs: [prep, test, scan, gh_release, verify_infrastructure]  
+    needs: [prep, test, scan, gh_release]  
     runs-on: ubuntu-latest 
     permissions:
       # Add any additional permissions your job requires here
@@ -293,7 +289,7 @@ jobs:
 
   create_attestations:  
     name: Generate Attestations
-    needs: [prep, test, scan, sbom, gh_release, build_and_publish_website, verify_infrastructure]  
+    needs: [prep, test, scan, sbom, gh_release, build_and_publish_website]  
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -326,7 +322,7 @@ jobs:
 
   octopus_deploy:  
     name: Handover to Octopus Deploy
-    needs: [prep, test, scan, sbom, build_and_publish_website, gh_release, create_attestations, verify_infrastructure]  
+    needs: [prep, test, scan, sbom, build_and_publish_website, gh_release, create_attestations]  
     runs-on: ubuntu-latest
     permissions:
       # Add any additional permissions your job requires here

@@ -1,4 +1,4 @@
-Example multi-architecture application to run on Kubernetes.  Creates an x86/x64 and Arm version of the application for Kubernetes.
+Example of a multi-architecture application to run on Kubernetes.  It has no database backend.  Creates an x86/x64 and Arm version of the application for Kubernetes.
 
 # Build Workflow
 
@@ -10,7 +10,7 @@ The application is deployed using Octopus Deploy - the process can be found in .
 
 # Forking
 
-If you wish to Fork this repo you'll need to set the following GitHub Actions variables in the forked repo.
+If you wish to Fork this repo, you'll need to set the following GitHub Actions variables in the forked repo.
 
 - DOCKER_HUB_REPO
 - OCTOPUS_FEATURE_BRANCH_CHANNEL

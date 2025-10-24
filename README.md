@@ -6,7 +6,7 @@ The application is built using GitHub Actions - the workflow can be found in .gi
 
 # Deployments
 
-The application is deployed using Octopus Deploy - the process can be found in .octopus/deployment_process.ocl
+The application is deployed using Octopus Deploy - the process can be found in .octopus/deployment_process.ocl.
 
 # Forking
 

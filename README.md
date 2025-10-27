@@ -1,5 +1,9 @@
 Example of a multi-architecture application to run on Kubernetes.  It has no database backend.  Creates an x86/x64 and Arm version of the application for Kubernetes.
 
+# Requirements
+
+At this time, this application has no external requirements to run on Kubernetes.  It is a .NET application.
+
 # Build Workflow
 
 The application is built using GitHub Actions - the workflow can be found in .github/workflows/build.yml.

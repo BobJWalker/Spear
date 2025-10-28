@@ -2,7 +2,7 @@ Example of a multi-architecture application to run on Kubernetes.  It has no dat
 
 # Requirements
 
-At this time, this application has no external requirements to run on Kubernetes.  It is a .NET application.
+At this time, this application has no external requirements to run on Kubernetes.  It is a .NET application.  All the necessary build information can be found in the DockerFile.
 
 # Build Workflow
 

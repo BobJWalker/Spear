@@ -1,8 +1,8 @@
-Example of a multi-architecture application to run on Kubernetes.  It has no database backend.  The build creates an x86/x64 and an Arm version of the application for Kubernetes to run.
+Example of a multi-architecture application to run on Kubernetes.  It has no database backend.  The build creates an x86/x64 and an ARM version of the application for Kubernetes to run.
 
 # Requirements
 
-At this time, this application has no external requirements to run on Kubernetes.  It is a .NET application.  All the necessary build information can be found in the DockerFile.
+Currently, this application has no external requirements to run on Kubernetes.  It is a .NET application.  All the necessary build information can be found in the Dockerfile.
 
 # Build Workflow
 

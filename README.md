@@ -1,4 +1,4 @@
-Example of a multi-architecture application to run on Kubernetes.  It has no database backend.  Creates an x86/x64 and an Arm version of the application for Kubernetes.
+Example of a multi-architecture application to run on Kubernetes.  It has no database backend.  The build creates an x86/x64 and an Arm version of the application for Kubernetes.
 
 # Requirements
 

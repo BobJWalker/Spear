@@ -6,7 +6,7 @@ Currently, this application has no external requirements to run on Kubernetes.  
 
 # Build Workflow
 
-The application is built using GitHub Actions - the workflow can be found in .github/workflows/build.yml.
+The application is built using GitHub Actions - the workflow can be found in .github/workflows/build.yml.  The action will run unit tests, scan for vulnerabilities, generate attestations, an SBOM, and a Docker container.
 
 # Deployments
 

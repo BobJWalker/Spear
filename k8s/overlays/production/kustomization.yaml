@@ -1,0 +1,26 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- ../../base
+
+patches:
+ - target:
+    kind: Gateway
+    name: spear-test-ingress
+   patch: |-
+    - op: replace
+      path: /spec/listeners/0/hostname
+      value: speartest.local
+    - op: replace
+      path: /spec/listeners/0/name
+      value: spearttest-local-http
+ - target:
+    kind: HTTPRoute
+    name: spear-test-httproute
+   patch: |-
+    - op: replace
+      path: /spec/hostnames/0/
+      value: speartest.local
+    - op: replace
+      path: /spec/rules/parentRefs/0/name
+      value: spearttest-local-http

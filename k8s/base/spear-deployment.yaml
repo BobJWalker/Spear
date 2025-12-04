@@ -58,35 +58,17 @@ spec:
     - port: 6800
       targetPort: 8080  
 ---
-apiVersion: gateway.networking.k8s.io/v1
-kind: Gateway
-metadata:    
-  name: spear-gateway  
-spec:
-  gatewayClassName: istio
-  listeners:
-  - hostname: spearlocal.local
-    name: spear-gateway-http
-    port: 80
-    protocol: HTTP
-    allowedRoutes:
-      namespaces:
-        from: All
----
-apiVersion: gateway.networking.k8s.io/v1
-kind: HTTPRoute
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
 metadata:
-  name: spear-local-httproute  
+  name: argocd-ingress
+  namespace: argocd
 spec:
-  hostnames:
-  - spearlocal.local
-  parentRefs:
-  - name: spear-gateway    
-  rules:
-  - backendRefs:
-    - name: spear-app-cluster-ip-service
-      port: 6800
-    matches:
-    - path:
-        type: PathPrefix
-        value: /
+  entryPoints:
+    - web
+  routes:
+    - match: Host("spear.local")
+      kind: Rule
+      services:
+        - name: spear-app-cluster-ip-service
+          port: 6800      

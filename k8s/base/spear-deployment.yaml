@@ -61,8 +61,8 @@ spec:
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
-  name: argocd-ingress
-  namespace: argocd
+  name: spear-ingress
+  namespace: spear
 spec:
   entryPoints:
     - web

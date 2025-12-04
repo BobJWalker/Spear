@@ -14,10 +14,10 @@ variable "stringData:sumologicUrl" {
     value "#{KeyVault.Sumologic.Url}" {}
 }
 
-variable "spec:listeners:0:hostname" {
-    value "#{Standards.K8s.HostName}" {}
+variable "metadata:namespace" {
+    value "#{Standards.K8s.Namespace}" {}
 }
 
-variable "spec:hostnames:0" {
-    value "#{Standards.K8s.HostName}" {}
+variable "spec:routes:0:match" {
+    value "Host(\"#{Standards.K8s.HostName}\")" {}
 }

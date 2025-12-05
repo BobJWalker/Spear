@@ -58,17 +58,18 @@ spec:
     - port: 6800
       targetPort: 8080  
 ---
-apiVersion: traefik.containo.us/v1alpha1
-kind: IngressRoute
+apiVersion: gateway.networking.k8s.io/v1
+kind: HttpRoute
 metadata:
-  name: spear-ingress
+  name: spear-route
   namespace: spear
 spec:
-  entryPoints:
-    - web
-  routes:
-    - match: Host("spear.local")
-      kind: Rule
-      services:
+  parentRefs:
+  - name: public-gateway
+    namespace: default
+  hostnames:
+    - "spear.bobjwalker.local"
+  rules:
+    - backendRefs:
         - name: spear-app-cluster-ip-service
           port: 6800      

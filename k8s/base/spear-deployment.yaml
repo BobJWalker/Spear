@@ -59,17 +59,17 @@ spec:
       targetPort: 8080  
 ---
 apiVersion: gateway.networking.k8s.io/v1
-kind: HttpRoute
+kind: HTTPRoute
 metadata:
   name: spear-route
-  namespace: spear
+  namespace: argocd
 spec:
   parentRefs:
   - name: public-gateway
-    namespace: default
+    namespace: traefik
   hostnames:
     - "spear.bobjwalker.local"
   rules:
     - backendRefs:
         - name: spear-app-cluster-ip-service
-          port: 6800      
+          port: 6800   

@@ -68,7 +68,7 @@ spec:
   - name: public-gateway
     namespace: traefik
   hostnames:
-    - "spear.bobjwalker.local"
+    - spear.bobjwalker.local
   rules:
     - backendRefs:
         - name: spear-app-cluster-ip-service

@@ -19,5 +19,5 @@ variable "metadata:namespace" {
 }
 
 variable "spec:hostnames:0" {
-    value "\"#{Standards.K8s.HostName}\"" {}
+    value "#{Standards.K8s.HostName}" {}
 }

@@ -11,27 +11,6 @@ run_retention_policy {
 }
 
 process {
-    step "azure-key-vault-retrieve-secrets" {
-        name = "Azure Key Vault - Retrieve Secrets"
-
-        action {
-            properties = {
-                Azure.KeyVault.RetrieveSecrets.Account = "Azure.Account"
-                Azure.KeyVault.RetrieveSecrets.PrintVariableNames = "False"
-                Azure.KeyVault.RetrieveSecrets.VaultName = "#{KeyVault.Azure.Name}"
-                Azure.KeyVault.RetrieveSecrets.VaultSecrets = "#{KeyVault.Azure.Secrets.List}"
-                Octopus.Action.Template.Id = "ActionTemplates-561"
-                Octopus.Action.Template.Version = "2"
-            }
-            worker_pool_variable = "Standards.Worker.Pool"
-
-            container {
-                feed = "dockerhub"
-                image = "#{Azure.ExecutionContainer.Name}"
-            }
-        }
-    }
-
     process_template "destroy-container-infrastructure" {
         name = "Destroy Container Infrastructure"
         process_template_slug = "runbook-destroy-container-infrastructure"

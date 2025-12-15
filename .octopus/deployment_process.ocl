@@ -1,67 +1,35 @@
-step "deploy-container" {
-    name = "Deploy Container"
-    properties = {
-        Octopus.Action.TargetRoles = "spear-web"
+process_template "deploy-k8s-manifest" {
+    name = "Deploy K8s Manifest"
+    process_template_slug = "deploy-kubernetes-manifests"
+    version_mask = "1.X"
+
+    package_parameter "K8sTemplate.Container" {
+        feed = "dockerhub"
+        package_id = "bobjwalker99/spear"
     }
 
-    action {
-        action_type = "Octopus.KubernetesDeployRawYaml"
-        properties = {
-            Octopus.Action.GitRepository.Source = "External"
-            Octopus.Action.Kubernetes.DeploymentTimeout = "180"
-            Octopus.Action.Kubernetes.ResourceStatusCheck = "True"
-            Octopus.Action.Kubernetes.ServerSideApply.Enabled = "True"
-            Octopus.Action.Kubernetes.ServerSideApply.ForceConflicts = "True"
-            Octopus.Action.KubernetesContainers.CustomResourceYamlFileName = <<-EOT
-                k8s/base/*secrets.yaml
-                k8s/base/*deployment.yaml
-                EOT
-            Octopus.Action.KubernetesContainers.Namespace = "#{Standards.K8s.Namespace}"
-            Octopus.Action.Package.JsonConfigurationVariablesTargets = "**/*.{yml,yaml}"
-            Octopus.Action.Script.ScriptSource = "GitRepository"
-        }
-        worker_pool_variable = "Standards.Worker.Pool"
-
-        git_dependencies {
-            default_branch = "main"
-            file_path_filters = ["k8s/base/*secrets.yaml", "k8s/base/*deployment.yaml"]
-            git_credential_type = "GitHub"
-            github_connection_id = "GitHubAppConnections-1"
-            repository_uri = "https://github.com/BobJWalker/Spear.git"
-        }
-
-        packages "spear" {
-            acquisition_location = "NotAcquired"
-            feed = "dockerhub"
-            package_id = "bobjwalker99/spear"
-            properties = {
-                Extract = "False"
-                Purpose = "DockerImageReference"
-                SelectionMode = "immediate"
-            }
-        }
+    parameter "K8sTemplate.Target.Tag" {
+        value = "spear-web"
     }
-}
 
-step "verify-deployment" {
-    name = "Verify Deployment"
+    parameter "K8sTemplate.Git.Repo" {
+        value = "https://github.com/BobJWalker/Spear.git"
+    }
 
-    action {
-        action_type = "Octopus.Script"
-        properties = {
-            Octopus.Action.GitRepository.Source = "External"
-            Octopus.Action.Script.ScriptFileName = "scripts/VerifySuccessfulDeployment.ps1"
-            Octopus.Action.Script.ScriptSource = "GitRepository"
-            OctopusUseBundledTooling = "False"
-        }
-        worker_pool_variable = "Standards.Worker.Pool"
+    parameter "K8sTemplate.Namespace" {
+        value = "#{Standards.K8s.HostName}"
+    }
 
-        git_dependencies {
-            default_branch = "main"
-            git_credential_type = "GitHub"
-            github_connection_id = "GitHubAppConnections-1"
-            repository_uri = "https://github.com/BobJWalker/Spear.git"
-        }
+    parameter "K8sTemplate.Verification.Script.Path" {
+        value = "scripts/VerifySuccessfulDeployment.ps1"
+    }
+
+    parameter "K8sTemplate.Worker.Pool" {
+        value = "#{Standards.Worker.Pool}"
+    }
+
+    parameter "K8sTemplate.Branch.Name" {
+        value = "main"
     }
 }
 

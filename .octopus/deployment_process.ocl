@@ -16,10 +16,6 @@ process_template "deploy-k8s-manifest" {
         value = "https://github.com/BobJWalker/Spear.git"
     }
 
-    parameter "K8sTemplate.Namespace" {
-        value = "#{Standards.K8s.HostName}"
-    }
-
     parameter "K8sTemplate.Verification.Script.Path" {
         value = "scripts/VerifySuccessfulDeployment.ps1"
     }
@@ -30,6 +26,10 @@ process_template "deploy-k8s-manifest" {
 
     parameter "K8sTemplate.Branch.Name" {
         value = "main"
+    }
+
+    parameter "K8sTemplate.Namespace" {
+        value = "#{Standards.K8s.Namespace}"
     }
 }
 

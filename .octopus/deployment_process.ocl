@@ -49,6 +49,6 @@ step "slack-send-simple-notification" {
             ssn_Title = "#{Notification.DeploymentStatus.Subject.Text}"
             ssn_Username = "Octopus Deploy"
         }
-        worker_pool = "homelab-k8s"
+        worker_pool_variable = "Standards.Worker.Pool"
     }
 }

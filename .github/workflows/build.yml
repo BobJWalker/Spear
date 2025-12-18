@@ -282,7 +282,8 @@ jobs:
         uses: OctopusDeploy/push-build-information-action@v3
         with:
           packages: |          
-            Spear.SBOM                               
+            Spear.SBOM
+            ${{ vars.DOCKER_HUB_REPO }}                               
           version: "${{ needs.prep.outputs.sem_Ver }}"
           server: ${{ vars.OCTOPUS_SERVER_URL }}
           space: ${{ vars.OCTOPUS_SPACE }}  

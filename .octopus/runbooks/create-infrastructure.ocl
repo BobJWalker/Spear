@@ -11,6 +11,22 @@ run_retention_policy {
 }
 
 process {
+    step "azure-key-vault-retrieve-secrets" {
+        name = "Azure Key Vault - Retrieve Secrets"
+
+        action {
+            properties = {
+                Azure.KeyVault.RetrieveSecrets.Account = "Standards.Azure.Account"
+                Azure.KeyVault.RetrieveSecrets.PrintVariableNames = "False"
+                Azure.KeyVault.RetrieveSecrets.VaultName = "bobjwalker-vault"
+                Azure.KeyVault.RetrieveSecrets.VaultSecrets = "slack-notifications | SlackWebhookUrl"
+                Octopus.Action.Template.Id = "ActionTemplates-561"
+                Octopus.Action.Template.Version = "2"
+            }
+            worker_pool_variable = "Standards.Worker.Pool"
+        }
+    }
+
     process_template "create-container-infrastructure" {
         name = "Create Container Infrastructure"
         process_template_slug = "create-container-infrastructure"
@@ -22,6 +38,25 @@ process {
 
         parameter "Template.Kubernetes.Namespace.Name" {
             value = "spear-#{Octopus.Environment.Name | ToLower }"
+        }
+    }
+
+    step "slack-send-simple-notification" {
+        name = "Slack - Send Simple Notification"
+
+        action {
+            properties = {
+                Octopus.Action.Template.Id = "ActionTemplates-101"
+                Octopus.Action.Template.Version = "15"
+                ssn_Channel = "feed-bob-local"
+                ssn_Color = "good"
+                ssn_HookUrl = "#{Octopus.Action[Azure Key Vault - Retrieve Secrets].Output.SlackWebhookUrl}"
+                ssn_IconUrl = "https://octopus.com/content/resources/favicon.png"
+                ssn_Message = "#{Notification.Body.Text}"
+                ssn_Title = "#{Notification.RunbookStatus.Subject.Text}"
+                ssn_Username = "Octopus Deploy"
+            }
+            worker_pool_variable = "Standards.Worker.Pool"
         }
     }
 }

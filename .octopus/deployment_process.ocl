@@ -19,6 +19,57 @@ step "azure-key-vault-retrieve-secrets" {
     }
 }
 
+process_template "verify-supply-chain" {
+    name = "Verify Supply Chain"
+    process_template_slug = "deploy-process-verify-build-artifacts"
+    version_mask = "2.X"
+
+    package_parameter "Template.SBOM.Artifact" {
+        feed = "octopus-server-built-in"
+        package_id = "Spear.SBOM"
+    }
+
+    parameter "Template.Git.AuthToken" {
+        value = "#{KeyVault.GitHub.Token}"
+    }
+
+    parameter "Template.Verify.WorkerPool" {
+        value = "#{Standards.Worker.Pool}"
+    }
+
+    parameter "Template.Verify.ExecutionContainerFeed" {
+        value = "Feeds-1283"
+    }
+}
+
+step "verify-infrastructure" {
+    name = "Verify Infrastructure"
+
+    action {
+        channels = ["default"]
+        properties = {
+            Octopus.Action.Template.Id = "ActionTemplates-141"
+            Octopus.Action.Template.Version = "18"
+            Run.Runbook.Api.Key = "#{KeyVault.Octopus.Api.Key}"
+            Run.Runbook.AutoApproveManualInterventions = "No"
+            Run.Runbook.Base.Url = "#{Octopus.Web.ServerUri}"
+            Run.Runbook.CaCBranchName = "#{Octopus.Release.Git.BranchName}"
+            Run.Runbook.CancelInSeconds = "1800"
+            Run.Runbook.CustomNotes.Toggle = "False"
+            Run.Runbook.DateTime = "N/A"
+            Run.Runbook.Environment.Name = "#{Octopus.Environment.Name}"
+            Run.Runbook.Machines = "N/A"
+            Run.Runbook.ManualIntervention.EnvironmentToUse = "#{Octopus.Environment.Name}"
+            Run.Runbook.Name = "Create Infrastructure"
+            Run.Runbook.Project.Name = "#{Octopus.Project.Name}"
+            Run.Runbook.Space.Name = "#{Octopus.Space.Name}"
+            Run.Runbook.UsePublishedSnapShot = "True"
+            Run.Runbook.Waitforfinish = "True"
+        }
+        worker_pool_variable = "Standards.Worker.Pool"
+    }
+}
+
 process_template "deploy-k8s-manifest" {
     name = "Deploy K8s Manifest"
     process_template_slug = "deploy-kubernetes-manifests"

@@ -15,6 +15,7 @@ on:
   workflow_dispatch:      
 jobs:
   prep:
+    # Run this job on arm instead of x86
     runs-on: ubuntu-24.04-arm
     name: Deploy Preparation
     outputs:       
@@ -73,6 +74,7 @@ jobs:
             additionalArguments: /overrideconfig assembly-file-versioning-format=${{ env.GIT_VERSION_FORMAT }} /overrideconfig increment=${{ env.GIT_VERSION_INCREMENT }} /overrideconfig mode=${{ env.GIT_VERSION_MODE }} /overrideconfig update-build-number=true
   test:
     name: Run Unit Tests
+    # Run this job on arm instead of x86
     runs-on: ubuntu-24.04-arm
 
     steps:
@@ -98,6 +100,7 @@ jobs:
 
   scan:
     name: Scan Repo for Vulnerabilities
+    # Run this job on arm instead of x86
     runs-on: ubuntu-24.04-arm
 
     steps:
@@ -122,6 +125,7 @@ jobs:
   gh_release:  
     name: Create GitHub Release
     needs: [prep, test, scan]  
+    # Run this job on arm instead of x86
     runs-on: ubuntu-24.04-arm
     permissions:
       id-token: write      
@@ -149,7 +153,8 @@ jobs:
     name: Build, Scan, and Publish Website
     outputs:       
       website_hash: ${{ steps.get_digest.outputs.SPEAR_DOCKER_SHA }}
-    needs: [prep, test, scan, gh_release]                 
+    needs: [prep, test, scan, gh_release] 
+    # Run this job on arm instead of x86
     runs-on: ubuntu-24.04-arm
     steps:
       - name: Checkout Code to build website
@@ -219,6 +224,7 @@ jobs:
     outputs:       
       sbom_hash: ${{ steps.determine_sbom_hash.outputs.SBOM_HASH }}
     needs: [prep, test, scan, gh_release]  
+    # Run this job on arm instead of x86
     runs-on: ubuntu-24.04-arm 
     permissions:
       # Add any additional permissions your job requires here
@@ -291,6 +297,7 @@ jobs:
   create_attestations:  
     name: Generate Attestations
     needs: [prep, test, scan, sbom, gh_release, build_and_publish_website]  
+    # Run this job on arm instead of x86
     runs-on: ubuntu-24.04-arm
     permissions:
       id-token: write
@@ -323,7 +330,8 @@ jobs:
 
   octopus_deploy:  
     name: Handover to Octopus Deploy
-    needs: [prep, test, scan, sbom, build_and_publish_website, gh_release, create_attestations]  
+    needs: [prep, test, scan, sbom, build_and_publish_website, gh_release, create_attestations] 
+    # Run this job on arm instead of x86
     runs-on: ubuntu-24.04-arm
     permissions:
       # Add any additional permissions your job requires here
@@ -345,6 +353,7 @@ jobs:
           release_number: "${{ needs.prep.outputs.sem_Ver }}"
           git_ref: ${{ (github.ref_type == 'tag' && github.event.repository.default_branch ) || (github.head_ref || github.ref) }}
           git_commit: ${{ github.event.after || github.event.pull_request.head.sha }} 
+
 
 
 

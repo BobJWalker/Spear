@@ -20,7 +20,7 @@
     <PackageReference Include="NLog.Web.AspNetCore" Version="6.0.4" />
     <PackageReference Include="Octopus.OpenFeature" Version="1.2.1" />
     <PackageReference Include="OpenFeature.Contrib.Providers.EnvVar" Version="0.0.7" />
-    <PackageReference Include="RestSharp" Version="112.1.0" />
+    <PackageReference Include="RestSharp" Version="113.1.0" />
     <PackageReference Include="SumoLogic.Logging.NLog" Version="1.0.1.8" />
   </ItemGroup>
 </Project>

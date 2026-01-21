@@ -500,8 +500,8 @@
       },
       "RestSharp": {
         "type": "Transitive",
-        "resolved": "112.1.0",
-        "contentHash": "bOUGNZqhhv/QeCXHTKEUil846yBjwWXpzPKjO67kFvaAOoF361z7jLY5BMnuZ6WD2WQRA750sNMcK7MSPCQ5Mg=="
+        "resolved": "113.1.0",
+        "contentHash": "poNb3XPzF0Rxp+XW9e7U+TZOIjABkGEYd0cGuNIstcRZTU8ES6+7tpbZ55+0XpxwnxxU8nSAZ89p6WUKI+Cg+A=="
       },
       "SumoLogic.Logging.Common": {
         "type": "Transitive",
@@ -559,7 +559,7 @@
           "Newtonsoft.Json": "[13.0.4, )",
           "Octopus.OpenFeature": "[1.2.1, )",
           "OpenFeature.Contrib.Providers.EnvVar": "[0.0.7, )",
-          "RestSharp": "[112.1.0, )",
+          "RestSharp": "[113.1.0, )",
           "SumoLogic.Logging.NLog": "[1.0.1.8, )"
         }
       }

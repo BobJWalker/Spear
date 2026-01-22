@@ -470,8 +470,8 @@
       },
       "Octopus.OpenFeature": {
         "type": "Transitive",
-        "resolved": "1.2.1",
-        "contentHash": "qeYgarzLNTD4CTLGzNBinXN04RoFkVAl5JlCRQWtZ86HKfsN3gT736KLFamdQF8Jd9hip/QKiNZmX1gQvOzUtw==",
+        "resolved": "1.2.2",
+        "contentHash": "F2hmPxt0pe9PXrO+oqyQjf3E7kRr4IeLbWRNpQBGWd09roLa3hpfs6t8RDXAmIV63xReJkZqkv6Di/G6aYGWyg==",
         "dependencies": {
           "OpenFeature": "2.0.0",
           "System.Text.Json": "9.0.5"
@@ -557,7 +557,7 @@
           "NLog.Targets.Syslog": "[7.0.0, )",
           "NLog.Web.AspNetCore": "[6.0.4, )",
           "Newtonsoft.Json": "[13.0.4, )",
-          "Octopus.OpenFeature": "[1.2.1, )",
+          "Octopus.OpenFeature": "[1.2.2, )",
           "OpenFeature.Contrib.Providers.EnvVar": "[0.0.7, )",
           "RestSharp": "[113.1.0, )",
           "SumoLogic.Logging.NLog": "[1.0.1.8, )"

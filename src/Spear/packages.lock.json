@@ -76,13 +76,13 @@
       },
       "NLog.Extensions.Logging": {
         "type": "Direct",
-        "requested": "[6.0.4, )",
-        "resolved": "6.0.4",
-        "contentHash": "8lQ44ZFdJwOJNH61HySZiNUWHjWfT3GYRT3gcTrnlf4mDHWMRKhWvNmr1P0VznT/0sNqpnga+Zy4CECX1SJiDQ==",
+        "requested": "[6.1.1, )",
+        "resolved": "6.1.1",
+        "contentHash": "vSPYZGV77KRfDJP+V05OGRhKApfAtL9DyILdB5WDcWzBkx64AYjYnG1lf/kE2FS++6HdHhPtSCUJTSYOVQJNTg==",
         "dependencies": {
           "Microsoft.Extensions.Configuration.Abstractions": "8.0.0",
           "Microsoft.Extensions.Logging": "8.0.0",
-          "NLog": "6.0.4"
+          "NLog": "6.1.0"
         }
       },
       "NLog.Targets.Syslog": {
@@ -388,8 +388,8 @@
       },
       "NLog": {
         "type": "Transitive",
-        "resolved": "6.0.4",
-        "contentHash": "Xr+lIk1ZlTTFXEqnxQVLxrDqZlt2tm5X+/AhJbaY2emb/dVtGDiU5QuEtj3gHtwV/SWlP/rJ922I/BPuOJXlRw=="
+        "resolved": "6.1.0",
+        "contentHash": "K4UdxS4fuJeCM0sm+JTXWoJgOtcXX7X5kvE94bR07UB8JOB6A2+ski7q1tf2qdv+N0H3gsoWtteScJCHa3+zpw=="
       },
       "NUglify": {
         "type": "Transitive",

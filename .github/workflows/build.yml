@@ -149,49 +149,90 @@ jobs:
             Commit Message: ${{ github.event.head_commit.message }}
           draft: false
 
-  build_and_publish_website:
-    name: Build, Scan, and Publish Website
-    outputs:       
-      website_hash: ${{ steps.get_digest.outputs.SPEAR_DOCKER_SHA }}
-    needs: [prep, test, scan, gh_release] 
-    # Run this job on arm instead of x86
+  # Native ARM64 build on Graviton runner — no emulation
+  build_arm64:
+    name: Build ARM64 Image (Native)
+    needs: [prep, test, scan, gh_release]
     runs-on: ubuntu-24.04-arm
     steps:
-      - name: Checkout Code to build website
+      - name: Checkout Code
         uses: actions/checkout@v1
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-        with:
-          platforms: linux/amd64,linux/arm64
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
 
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: 10.x                 
-    
+          dotnet-version: 10.x
+
       - name: Login to Docker Hub
         uses: docker/login-action@v2
-        with:             
-            username: ${{ secrets.DOCKERHUB_USERNAME }}
-            password: ${{ secrets.DOCKERHUB_PAT }}
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PAT }}
 
-      - name: Build and push by digest
-        id: build_container
-        uses: docker/build-push-action@v6        
-        with:   
-          context: src/Spear
-          platforms: |
-            linux/amd64
-            linux/arm64
-          provenance: false          
-          build-args: |
-            APP_VERSION=${{ needs.prep.outputs.sem_Ver }}
-          tags: ${{ vars.DOCKER_HUB_REPO }}:${{ needs.prep.outputs.sem_Ver }},${{ vars.DOCKER_HUB_REPO }}:latest
-          outputs: type=image,name-canonical=true,push=true                                                   
+      - name: Build and push ARM64 image
+        working-directory: src/Spear
+        run: |
+          docker build \
+            --build-arg APP_VERSION=${{ needs.prep.outputs.sem_Ver }} \
+            -t ${{ vars.DOCKER_HUB_REPO }}:${{ needs.prep.outputs.sem_Ver }}-arm64 \
+            .
+          docker push ${{ vars.DOCKER_HUB_REPO }}:${{ needs.prep.outputs.sem_Ver }}-arm64
+
+  # Native AMD64 build on x86 runner — no emulation
+  build_amd64:
+    name: Build AMD64 Image (Native)
+    needs: [prep, test, scan, gh_release]
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v1
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 10.x
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PAT }}
+
+      - name: Build and push AMD64 image
+        working-directory: src/Spear
+        run: |
+          docker build \
+            --build-arg APP_VERSION=${{ needs.prep.outputs.sem_Ver }} \
+            -t ${{ vars.DOCKER_HUB_REPO }}:${{ needs.prep.outputs.sem_Ver }}-amd64 \
+            .
+          docker push ${{ vars.DOCKER_HUB_REPO }}:${{ needs.prep.outputs.sem_Ver }}-amd64
+
+  # Merge per-arch images into a single multi-arch manifest
+  publish_manifest:
+    name: Create Multi-Arch Manifest, Scan, and Publish
+    outputs:
+      website_hash: ${{ steps.get_digest.outputs.SPEAR_DOCKER_SHA }}
+    needs: [prep, build_arm64, build_amd64]
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PAT }}
+
+      - name: Create and push multi-arch manifest
+        run: |
+          docker manifest create ${{ vars.DOCKER_HUB_REPO }}:${{ needs.prep.outputs.sem_Ver }} \
+            ${{ vars.DOCKER_HUB_REPO }}:${{ needs.prep.outputs.sem_Ver }}-amd64 \
+            ${{ vars.DOCKER_HUB_REPO }}:${{ needs.prep.outputs.sem_Ver }}-arm64
+
+          docker manifest create ${{ vars.DOCKER_HUB_REPO }}:latest \
+            ${{ vars.DOCKER_HUB_REPO }}:${{ needs.prep.outputs.sem_Ver }}-amd64 \
+            ${{ vars.DOCKER_HUB_REPO }}:${{ needs.prep.outputs.sem_Ver }}-arm64
+
+          docker manifest push ${{ vars.DOCKER_HUB_REPO }}:${{ needs.prep.outputs.sem_Ver }}
+          docker manifest push ${{ vars.DOCKER_HUB_REPO }}:latest
 
       - name: Run Trivy vulnerability scanner on docker container
         uses: aquasecurity/trivy-action@0.33.1
@@ -202,22 +243,22 @@ jobs:
           vuln-type: 'os,library'
           ignore-unfixed: true
           exit-code: '0'
-          format: 'sarif'          
-          output: 'trivy-image-results.sarif'          
+          format: 'sarif'
+          output: 'trivy-image-results.sarif'
           severity: 'LOW,MEDIUM,HIGH,CRITICAL'
 
       - name: Upload Trivy scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: 'trivy-image-results.sarif'
-      
-      - name: get docker image sha
-        working-directory: src
+
+      - name: Get docker image sha
         id: get_digest
-        run: |            
-            dockerSha="${{ steps.build_container.outputs.digest }}"
-            echo "Docker sha is $dockerSha"            
-            echo "SPEAR_DOCKER_SHA=$dockerSha" >> $GITHUB_OUTPUT
+        run: |
+          docker manifest inspect ${{ vars.DOCKER_HUB_REPO }}:${{ needs.prep.outputs.sem_Ver }} > manifest.json
+          dockerSha=$(python3 -c "import json; m=json.load(open('manifest.json')); print(m.get('digest', 'unknown'))" 2>/dev/null || docker manifest inspect --verbose ${{ vars.DOCKER_HUB_REPO }}:${{ needs.prep.outputs.sem_Ver }} | python3 -c "import sys,json,hashlib; data=sys.stdin.read(); print('sha256:'+hashlib.sha256(data.encode()).hexdigest())")
+          echo "Docker sha is $dockerSha"
+          echo "SPEAR_DOCKER_SHA=$dockerSha" >> $GITHUB_OUTPUT
 
   sbom:    
     name: Generate and Publish SBOM           
@@ -296,7 +337,7 @@ jobs:
 
   create_attestations:  
     name: Generate Attestations
-    needs: [prep, test, scan, sbom, gh_release, build_and_publish_website]  
+    needs: [prep, test, scan, sbom, gh_release, publish_manifest]  
     # Run this job on arm instead of x86
     runs-on: ubuntu-24.04-arm
     permissions:
@@ -307,7 +348,7 @@ jobs:
         shell: pwsh        
         run: |                    
           $cleanedSbomSha = $("${{ needs.sbom.outputs.sbom_hash }}" -replace "sha256:", "").Trim()
-          $cleanedImageSha = $("${{ needs.build_and_publish_website.outputs.website_hash }}" -replace "sha256:", "").Trim()
+          $cleanedImageSha = $("${{ needs.publish_manifest.outputs.website_hash }}" -replace "sha256:", "").Trim()
 
           $imageSubject = "${{ vars.DOCKER_HUB_REPO }}:${{ needs.prep.outputs.sem_Ver }}".Trim()          
           $sbomSubject = "Spear.SBOM.${{ needs.prep.outputs.sem_Ver }}.zip".Trim()
@@ -330,7 +371,7 @@ jobs:
 
   octopus_deploy:  
     name: Handover to Octopus Deploy
-    needs: [prep, test, scan, sbom, build_and_publish_website, gh_release, create_attestations] 
+    needs: [prep, test, scan, sbom, publish_manifest, gh_release, create_attestations] 
     # Run this job on arm instead of x86
     runs-on: ubuntu-24.04-arm
     permissions:
@@ -353,7 +394,3 @@ jobs:
           release_number: "${{ needs.prep.outputs.sem_Ver }}"
           git_ref: ${{ (github.ref_type == 'tag' && github.event.repository.default_branch ) || (github.head_ref || github.ref) }}
           git_commit: ${{ github.event.after || github.event.pull_request.head.sha }} 
-
-
-
-

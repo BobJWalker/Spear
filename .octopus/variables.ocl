@@ -21,3 +21,12 @@ variable "metadata:namespace" {
 variable "spec:hostnames:0" {
     value "#{Standards.K8s.HostName}" {}
 }
+
+variable "Prompted.Input.Variable" {
+    value {
+        prompt {
+            description = "This is a test of an input variable"
+            label = "Test Input Variable"
+        }
+    }
+}

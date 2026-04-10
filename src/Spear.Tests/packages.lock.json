@@ -4,9 +4,9 @@
     "net10.0": {
       "coverlet.collector": {
         "type": "Direct",
-        "requested": "[8.0.0, )",
-        "resolved": "8.0.0",
-        "contentHash": "EMkj/2F6n6IVPrvGYkqzGJs6phuGGkq6N+E7KW9rNyzNxXbwQ1KfMqWyXNf9nCNEQOA6IjFwmOLvkriwKE7Orw=="
+        "requested": "[8.0.1, )",
+        "resolved": "8.0.1",
+        "contentHash": "heVQl5tKYnnIDYlR1QMVGueYH6iriZTcZB6AjDczQNwZzxkjDIt9C84Pt4cCiZYrbo7jkZOYGWbs6Lo9wAtVLg=="
       },
       "Microsoft.NET.Test.Sdk": {
         "type": "Direct",
@@ -199,17 +199,17 @@
       },
       "NLog": {
         "type": "Transitive",
-        "resolved": "6.1.0",
-        "contentHash": "K4UdxS4fuJeCM0sm+JTXWoJgOtcXX7X5kvE94bR07UB8JOB6A2+ski7q1tf2qdv+N0H3gsoWtteScJCHa3+zpw=="
+        "resolved": "6.1.1",
+        "contentHash": "TCIwfAQX2IpZDnqs/+c5jCPnveCG8M6/wFmUk2odjRl0xiocfe4B+4qIvRbVbazSxcS28+Zu14pFeRJE9yAQAQ=="
       },
       "NLog.Extensions.Logging": {
         "type": "Transitive",
-        "resolved": "6.1.1",
-        "contentHash": "vSPYZGV77KRfDJP+V05OGRhKApfAtL9DyILdB5WDcWzBkx64AYjYnG1lf/kE2FS++6HdHhPtSCUJTSYOVQJNTg==",
+        "resolved": "6.1.2",
+        "contentHash": "CDak9fN3yqDrmFth5OX/8WpRdEhHOHDK9O4Lej4oWG0r9MygEKfwZXgl1F5ixSnz0Sk3aW/3a/irjtttJUGDDw==",
         "dependencies": {
           "Microsoft.Extensions.Configuration.Abstractions": "10.0.0",
           "Microsoft.Extensions.Logging": "10.0.0",
-          "NLog": "6.1.0"
+          "NLog": "6.1.1"
         }
       },
       "NLog.Targets.Syslog": {
@@ -223,10 +223,10 @@
       },
       "NLog.Web.AspNetCore": {
         "type": "Transitive",
-        "resolved": "6.1.1",
-        "contentHash": "N6WM+l5qjd/JtyC/zqdy1rUCyxjyBl0gWtXOCpP+C4nbNwBty1ao4ZqrNv/GYh2IUS4M7jHgBU5gOUfAVCzAew==",
+        "resolved": "6.1.2",
+        "contentHash": "PLXSRq7SYKhneMMd7+Ds4/gOVg++CDNpdN67ke6gp837aW4e70aQWuhMFHVL4YnFpO1UL+5QGEHP4w9wKZfwtg==",
         "dependencies": {
-          "NLog.Extensions.Logging": "6.1.1"
+          "NLog.Extensions.Logging": "6.1.2"
         }
       },
       "NUglify": {
@@ -265,8 +265,8 @@
       },
       "RestSharp": {
         "type": "Transitive",
-        "resolved": "113.1.0",
-        "contentHash": "poNb3XPzF0Rxp+XW9e7U+TZOIjABkGEYd0cGuNIstcRZTU8ES6+7tpbZ55+0XpxwnxxU8nSAZ89p6WUKI+Cg+A=="
+        "resolved": "114.0.0",
+        "contentHash": "8pDO4q+K8nIqXbvGCb9ciKcngj36pCXGRDzOYPEPoS2IvBIL+mejmUMAtSNALt/NkDc9LQmHvM95kdniLSbGtg=="
       },
       "SumoLogic.Logging.Common": {
         "type": "Transitive",
@@ -288,13 +288,13 @@
           "Autofac.Extensions.DependencyInjection": "[10.0.0, )",
           "LigerShark.WebOptimizer.Core": "[3.0.477, )",
           "Microsoft.VisualStudio.Azure.Containers.Tools.Targets": "[1.23.0, )",
-          "NLog.Extensions.Logging": "[6.1.1, )",
+          "NLog.Extensions.Logging": "[6.1.2, )",
           "NLog.Targets.Syslog": "[7.0.0, )",
-          "NLog.Web.AspNetCore": "[6.1.1, )",
+          "NLog.Web.AspNetCore": "[6.1.2, )",
           "Newtonsoft.Json": "[13.0.4, )",
           "Octopus.OpenFeature": "[2.0.0, )",
           "OpenFeature.Contrib.Providers.EnvVar": "[0.0.7, )",
-          "RestSharp": "[113.1.0, )",
+          "RestSharp": "[114.0.0, )",
           "SumoLogic.Logging.NLog": "[1.1.0, )"
         }
       }

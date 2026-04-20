@@ -3,23 +3,23 @@ process_template "key-vault" {
     process_template_slug = "key-vault-retrieve-secrets"
     version_mask = "2.X"
 
-    parameter "KeyVault.Vault.Name" {
+    parameter "KeyVault.Template.Vault.Name" {
         value = "#{KeyVault.Azure.Name}"
     }
 
-    parameter "KeyVault.Secrets.List" {
+    parameter "KeyVault.Template.Secrets.List" {
         value = "#{KeyVault.Azure.Secrets.List}"
     }
 
-    parameter "Template.Worker.Pool" {
+    parameter "KeyVault.Template.Worker.Pool" {
         value = "#{Standards.Worker.Pool}"
     }
 
-    parameter "KeyVault.ExecutionContainer.Feed" {
+    parameter "KeyVault.Template.ExecutionContainer.Feed" {
         value = "Feeds-1283"
     }
 
-    parameter "KeyVault.Instance.AirGapped" {
+    parameter "KeyVault.Template.Instance.AirGapped" {
         value = "True"
     }
 }

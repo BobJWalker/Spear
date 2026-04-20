@@ -1,3 +1,29 @@
+process_template "key-vault" {
+    name = "Key Vault"
+    process_template_slug = "key-vault-retrieve-secrets"
+    version_mask = "2.X"
+
+    parameter "KeyVault.Vault.Name" {
+        value = "#{KeyVault.Azure.Name}"
+    }
+
+    parameter "KeyVault.Secrets.List" {
+        value = "#{KeyVault.Azure.Secrets.List}"
+    }
+
+    parameter "Template.Worker.Pool" {
+        value = "#{Standards.Worker.Pool}"
+    }
+
+    parameter "KeyVault.ExecutionContainer.Feed" {
+        value = "Feeds-1283"
+    }
+
+    parameter "KeyVault.Instance.AirGapped" {
+        value = "True"
+    }
+}
+
 step "azure-key-vault-retrieve-secrets" {
     name = "Azure Key Vault - Retrieve Secrets"
 

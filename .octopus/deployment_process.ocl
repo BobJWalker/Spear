@@ -20,7 +20,7 @@ process_template "key-vault" {
     }
 
     parameter "KeyVault.Template.Instance.AirGapped" {
-        value = "True"
+        value = "False"
     }
 }
 

@@ -24,27 +24,6 @@ process_template "key-vault" {
     }
 }
 
-step "azure-key-vault-retrieve-secrets" {
-    name = "Azure Key Vault - Retrieve Secrets"
-
-    action {
-        properties = {
-            Azure.KeyVault.RetrieveSecrets.Account = "KeyVault.Azure.Account"
-            Azure.KeyVault.RetrieveSecrets.PrintVariableNames = "False"
-            Azure.KeyVault.RetrieveSecrets.VaultName = "#{KeyVault.Azure.Name}"
-            Azure.KeyVault.RetrieveSecrets.VaultSecrets = "#{KeyVault.Azure.Secrets.List}"
-            Octopus.Action.Template.Id = "ActionTemplates-561"
-            Octopus.Action.Template.Version = "2"
-        }
-        worker_pool_variable = "Standards.Worker.Pool"
-
-        container {
-            feed = "dockerhub"
-            image = "#{Standards.Azure.ExecutionContainer}"
-        }
-    }
-}
-
 process_template "verify-supply-chain" {
     name = "Verify Supply Chain"
     process_template_slug = "deploy-process-verify-build-artifacts"

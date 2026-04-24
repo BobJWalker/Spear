@@ -64,12 +64,12 @@ jobs:
         with:
           fetch-depth: '0'            
       - name: Install GitVersion
-        uses: gittools/actions/gitversion/setup@v1
+        uses: gittools/actions/gitversion/setup@v4
         with:
             versionSpec: 6.0.5
       - id: determine_version
         name: Determine Version
-        uses: gittools/actions/gitversion/execute@v1
+        uses: gittools/actions/gitversion/execute@v4
         with:
             additionalArguments: /overrideconfig assembly-file-versioning-format=${{ env.GIT_VERSION_FORMAT }} /overrideconfig increment=${{ env.GIT_VERSION_INCREMENT }} /overrideconfig mode=${{ env.GIT_VERSION_MODE }} /overrideconfig update-build-number=true
   test:
@@ -254,7 +254,7 @@ jobs:
 
       - name: Package SBOM
         id: "sbom_package"
-        uses: OctopusDeploy/create-zip-package-action@v3
+        uses: OctopusDeploy/create-zip-package-action@v4
         with:
           package_id: Spear.SBOM
           version: "${{ needs.prep.outputs.sem_Ver }}"  
@@ -273,12 +273,12 @@ jobs:
           "SBOM_HASH=$hashToSave" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
   
       - name: Login to Octopus Deploy 🐙
-        uses: OctopusDeploy/login@v1
+        uses: OctopusDeploy/login@v4
         with: 
           server: ${{ vars.OCTOPUS_SERVER_URL }}
           service_account_id: ${{ secrets.OCTOPUS_OIDC_SERVICE_ACCOUNT_ID }}
       - name: Push packages to Octopus 🐙
-        uses: OctopusDeploy/push-package-action@v3
+        uses: OctopusDeploy/push-package-action@v4
         with:
           server: ${{ vars.OCTOPUS_SERVER_URL }}
           space: ${{ vars.OCTOPUS_SPACE }}
@@ -323,7 +323,7 @@ jobs:
           Write-Host "Creating the checksums file"
           New-Item -Path . -Name "subject.checksums.txt" -ItemType "File" -Value $subjectText      
       - name: Generate Attestation from Provenance
-        uses: actions/attest-build-provenance@v2
+        uses: actions/attest-build-provenance@v4
         id: websiteattest
         with:
             subject-checksums: subject.checksums.txt        
@@ -338,12 +338,12 @@ jobs:
       id-token: write # This is required to obtain the OIDC Token for Octopus Deploy 
     steps:
       - name: Login to Octopus Deploy 🐙
-        uses: OctopusDeploy/login@v1
+        uses: OctopusDeploy/login@v4
         with: 
           server: ${{ vars.OCTOPUS_SERVER_URL }}
           service_account_id: ${{ secrets.OCTOPUS_OIDC_SERVICE_ACCOUNT_ID }}         
       - name: Create and deploy release in Octopus 🐙
-        uses: OctopusDeploy/create-release-action@v3
+        uses: OctopusDeploy/create-release-action@v4
         with:
           server: ${{ vars.OCTOPUS_SERVER_URL }}
           space: ${{ vars.OCTOPUS_SPACE }}

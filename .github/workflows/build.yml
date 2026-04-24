@@ -25,7 +25,7 @@ jobs:
       id-token: write # This is required to obtain the ID token from GitHub Actions     
     steps:
       - name: Login to Octopus Deploy 
-        uses: OctopusDeploy/login@v1
+        uses: OctopusDeploy/login@v2
         if: github.ref == 'refs/heads/main'
         with: 
           server: ${{ vars.OCTOPUS_SERVER_URL }}
@@ -60,7 +60,7 @@ jobs:
             echo "GIT_VERSION_MODE=ContinuousDelivery" >> $GITHUB_ENV
             echo "GIT_VERSION_FORMAT={Major}.{Minor}.{Patch}-{EscapedBranchName}.{CommitsSinceVersionSource}" >> $GITHUB_ENV
           fi
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v6
         with:
           fetch-depth: '0'            
       - name: Install GitVersion
@@ -79,10 +79,10 @@ jobs:
 
     steps:
       - name: Checkout code for unit tests
-        uses: actions/checkout@v1        
+        uses: actions/checkout@v6        
 
       - name: Setup .NET SDK
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 10.x       
 
@@ -132,7 +132,7 @@ jobs:
       contents: write
     steps:   
       - name: Checkout Code to build website
-        uses: actions/checkout@v1   
+        uses: actions/checkout@v6   
         if: github.ref == 'refs/heads/main'
 
       - name: Create Release for GitHub
@@ -207,7 +207,7 @@ jobs:
           severity: 'LOW,MEDIUM,HIGH,CRITICAL'
 
       - name: Upload Trivy scan results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: 'trivy-image-results.sarif'
       
@@ -285,7 +285,7 @@ jobs:
           packages: |
             packaged/Spear.SBOM.${{ needs.prep.outputs.sem_Ver }}.zip       
       - name: Push build information to Octopus 🐙
-        uses: OctopusDeploy/push-build-information-action@v3
+        uses: OctopusDeploy/push-build-information-action@v4
         with:
           packages: |          
             Spear.SBOM

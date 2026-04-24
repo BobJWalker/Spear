@@ -71,7 +71,11 @@ jobs:
         name: Determine Version
         uses: gittools/actions/gitversion/execute@v4
         with:
-            additionalArguments: /overrideconfig assembly-file-versioning-format=${{ env.GIT_VERSION_FORMAT }} /overrideconfig increment=${{ env.GIT_VERSION_INCREMENT }} /overrideconfig mode=${{ env.GIT_VERSION_MODE }} /overrideconfig update-build-number=true
+            overrideConfig: |
+              assembly-file-versioning-format=${{ env.GIT_VERSION_FORMAT }} 
+              increment=${{ env.GIT_VERSION_INCREMENT }} 
+              mode=${{ env.GIT_VERSION_MODE }} 
+              update-build-number=true
   test:
     name: Run Unit Tests
     # Run this job on arm instead of x86

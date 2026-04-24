@@ -108,7 +108,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Run Trivy vulnerability scanner on repo
-        uses: aquasecurity/trivy-action@0.35.0
+        uses: aquasecurity/trivy-action@0.36.0
         with:
           scan-type: 'fs'
           ignore-unfixed: true
@@ -194,7 +194,7 @@ jobs:
           outputs: type=image,name-canonical=true,push=true                                                   
 
       - name: Run Trivy vulnerability scanner on docker container
-        uses: aquasecurity/trivy-action@0.35.0
+        uses: aquasecurity/trivy-action@0.36.0
         env:
           TRIVY_SKIP_VERSION_CHECK: true
         with:
@@ -236,7 +236,7 @@ jobs:
           fetch-depth: '0'  
             
       - name: Run Trivy in GitHub SBOM mode and submit results to Dependency Graph
-        uses: aquasecurity/trivy-action@0.35.0
+        uses: aquasecurity/trivy-action@0.36.0
         with:
           scan-type: 'fs'
           format: 'github'
@@ -245,7 +245,7 @@ jobs:
           github-pat: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run Trivy in for SPDX mode for Octopus Deploy
-        uses: aquasecurity/trivy-action@0.35.0
+        uses: aquasecurity/trivy-action@0.36.0
         with:
           scan-type: 'fs'
           format: 'spdx-json'
@@ -273,7 +273,7 @@ jobs:
           "SBOM_HASH=$hashToSave" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
   
       - name: Login to Octopus Deploy 🐙
-        uses: OctopusDeploy/login@v4
+        uses: OctopusDeploy/login@v2
         with: 
           server: ${{ vars.OCTOPUS_SERVER_URL }}
           service_account_id: ${{ secrets.OCTOPUS_OIDC_SERVICE_ACCOUNT_ID }}
@@ -338,7 +338,7 @@ jobs:
       id-token: write # This is required to obtain the OIDC Token for Octopus Deploy 
     steps:
       - name: Login to Octopus Deploy 🐙
-        uses: OctopusDeploy/login@v4
+        uses: OctopusDeploy/login@v2
         with: 
           server: ${{ vars.OCTOPUS_SERVER_URL }}
           service_account_id: ${{ secrets.OCTOPUS_OIDC_SERVICE_ACCOUNT_ID }}         

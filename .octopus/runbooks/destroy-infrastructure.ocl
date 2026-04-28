@@ -24,4 +24,14 @@ process {
             value = "spear-web"
         }
     }
+
+    process_template "send-email-notification-to-operations" {
+        name = "Send email notification to operations"
+        process_template_slug = "notification-emails"
+        version_mask = "1.X"
+
+        parameter "Template.EmailTeam" {
+            value = "Teams-81"
+        }
+    }
 }

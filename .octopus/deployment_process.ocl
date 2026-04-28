@@ -47,6 +47,21 @@ process_template "verify-supply-chain" {
     }
 }
 
+step "publish-deployment-start-notification" {
+    name = "Publish Deployment Start Notification"
+
+    action {
+        action_type = "Octopus.Script"
+        properties = {
+            Octopus.Action.Script.ScriptBody = "Write-Host \"Publishing notification for starting a deployment\""
+            Octopus.Action.Script.ScriptSource = "Inline"
+            Octopus.Action.Script.Syntax = "PowerShell"
+            OctopusUseBundledTooling = "False"
+        }
+        worker_pool_variable = "Standards.Worker.Pool"
+    }
+}
+
 process_template "deploy-k8s-manifest" {
     name = "Deploy K8s Manifest"
     process_template_slug = "deploy-process-deploy-to-kubernetes-via-manifest"

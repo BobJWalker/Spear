@@ -11,16 +11,16 @@ process_template "key-vault" {
         value = "#{KeyVault.Azure.Secrets.List}"
     }
 
-    parameter "KeyVault.Template.Worker.Pool" {
-        value = "#{Standards.Worker.Pool}"
-    }
-
     parameter "KeyVault.Template.ExecutionContainer.Feed" {
         value = "Feeds-1283"
     }
 
     parameter "KeyVault.Template.Instance.AirGapped" {
         value = "False"
+    }
+
+    parameter "KeyVault.Template.Worker.Pool" {
+        value = "WorkerPools-423"
     }
 }
 

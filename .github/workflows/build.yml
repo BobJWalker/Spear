@@ -7,12 +7,26 @@ on:
       - 'feature/**'
       - 'features/**'
       - 'hotfix/**'
+      - 'cd/**'
     paths:
       - 'src/**'
       - 'db/**'
       - 'k8s/**'
       - '.github/workflows/build.yml'      
-  workflow_dispatch:      
+  workflow_dispatch:   
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'src/**'
+      - 'db/**'
+      - 'k8s/**'
+      - '.github/workflows/build.yml'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   prep:
     # Run this job on arm instead of x86
@@ -54,7 +68,11 @@ jobs:
           if [ "$BRANCH_NAME" = "main" ]; then         
             echo "GIT_VERSION_INCREMENT=Patch" >> $GITHUB_ENV            
             echo "GIT_VERSION_MODE=ContinuousDeployment" >> $GITHUB_ENV 
-            echo "GIT_VERSION_FORMAT={Major}.{Minor}.{Patch}" >> $GITHUB_ENV        
+            echo "GIT_VERSION_FORMAT={Major}.{Minor}.{Patch}" >> $GITHUB_ENV
+          elif [ "$GITHUB_EVENT_NAME" = "pull_request" ] || [ "$GITHUB_EVENT_NAME" = "pull_request_target" ]; then
+            echo "GIT_VERSION_INCREMENT=Patch" >> $GITHUB_ENV            
+            echo "GIT_VERSION_MODE=ContinuousDelivery" >> $GITHUB_ENV
+            echo "GIT_VERSION_FORMAT={Major}.{Minor}.{Patch}-PR{EscapedBranchName}.{CommitsSinceVersionSource}" >> $GITHUB_ENV         
           else            
             echo "GIT_VERSION_INCREMENT=Patch" >> $GITHUB_ENV            
             echo "GIT_VERSION_MODE=ContinuousDelivery" >> $GITHUB_ENV

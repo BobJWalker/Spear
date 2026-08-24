@@ -33,6 +33,7 @@ jobs:
     name: Deploy Preparation
     outputs:       
       sem_ver: ${{ steps.determine_version.outputs.AssemblySemFileVer }}
+      escaped_branch_name: ${{ steps.determine_version.outputs.EscapedBranchName }}
     permissions:
       # Add any additional permissions your job requires here
       id-token: write # This is required to obtain the ID token from GitHub Actions     
@@ -368,5 +369,7 @@ jobs:
           channel: ${{ github.ref == 'refs/heads/main' && vars.OCTOPUS_RELEASE_CHANNEL || vars.OCTOPUS_FEATURE_BRANCH_CHANNEL }}
           package_version: "${{ needs.prep.outputs.sem_Ver }}" 
           release_number: "${{ needs.prep.outputs.sem_Ver }}"
-          git_ref: ${{ (github.ref_type == 'tag' && github.event.repository.default_branch ) || github.ref }}
-          git_commit: ${{ github.event.after || github.event.pull_request.head.sha }} 
+          git_ref: ${{ github.head_ref || github.ref_name }}
+          git_commit: ${{ github.event.after || github.event.pull_request.head.sha }}
+          custom_fields: |
+            BranchName: ${{ needs.prep.outputs.escaped_branch_name }} 

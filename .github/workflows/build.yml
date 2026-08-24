@@ -23,7 +23,6 @@ on:
       - 'k8s/**'
       - '.github/workflows/build.yml'
 
-# concurrency:
 #  group: ${{ github.workflow }}-${{ github.head_ref || github.ref_name }}
 
 jobs:

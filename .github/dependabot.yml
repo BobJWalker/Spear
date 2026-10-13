@@ -10,4 +10,4 @@ updates:
       - "/src/Spear"
       - "/src/Spear.Tests"
     schedule:
-      interval: "daily"
+      interval: "weekly"

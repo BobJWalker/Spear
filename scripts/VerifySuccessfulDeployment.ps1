@@ -1,1 +1,1 @@
-Write-Host "The deployment was sucessful!!!"
+Write-Host "The deployment was successful!!!"

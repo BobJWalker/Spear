@@ -1,29 +1,7 @@
 name: Build CI
 
-on:
-  push:
-    branches: 
-      - main
-      - 'feature/**'
-      - 'features/**'
-      - 'bugfix/**'
-      - 'cd/**'
-    paths:
-      - 'src/**'
-      - 'db/**'
-      - 'k8s/**'
-      - '.github/workflows/build.yml'      
+on:  
   workflow_dispatch:   
-  pull_request:
-    branches:
-      - main
-    paths:
-      - 'src/**'
-      - 'db/**'
-      - 'k8s/**'
-      - '.github/workflows/build.yml'
-
-#  group: ${{ github.workflow }}-${{ github.head_ref || github.ref_name }}
 
 jobs:
   prep:
